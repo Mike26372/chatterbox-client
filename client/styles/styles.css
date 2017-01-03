@@ -6,7 +6,7 @@ body {
 }
 
 #main, #chats {
-    width: 800px;
+    /*width: 800px;*/
     margin: auto;
     text-align: left;
     background: white;
@@ -50,6 +50,13 @@ body {
     font-size: 20px;
 }
 
+#message:focus {
+    border-bottom: 1px solid #f57c00;
+    -webkit-box-shadow: 0 1px 0 0 #f57c00;
+  -moz-box-shadow: 0 1px 0 0 #f57c00;
+  box-shadow: 0 1px 0 0 #f57c00
+}
+
 form {
     padding: 20px;
     padding-left: 0;
@@ -62,6 +69,8 @@ form input[type=text] {
     font-size: 12px;
     padding: 5px;
 }
+
+
 
 .chat {
     padding: 5px;
@@ -93,10 +102,10 @@ form input[type=text] {
 }
 
 .nav-wrapper {
-    background-color: #1976d2; 
+    /*background-color: #1976d2; */
 }
 
 .btn {
-    background-color: #43a047;
+    /*background-color: #43a047;*/
 }
 

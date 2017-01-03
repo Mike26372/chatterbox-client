@@ -25,7 +25,7 @@ app.init = () => {
     app.fetch(`${app.fromLastFetchQuery}${JSON.stringify(app.greaterThanDateQueryObj)}`);
   });
 
-  app.renderRoom('lobby');
+  // app.renderRoom('lobby');
   app.fetch(app.mostRecentQuery);
   $('select').material_select();
 };
@@ -77,21 +77,19 @@ app.clearMessages = () => {
 };
 
 app.renderMessage = (message) => {
-  var messageNode = $('<div>');
-  var userNode = $('<span>').addClass('username').text(`${message.username}: `);
-  var textNode = $('<span>').text(message.text);
-  messageNode.append(userNode).append(textNode);
+  var messageContainer = $('<div>').addClass('card').addClass('horizontal');
+  var messageNode = $('<div>').addClass('card-stacked');
+  var userNode = $('<div>').addClass('username').addClass('card-action').append($('<a>'));
+  userNode.find('a').text(`${message.username}`);
+  var textNode = $('<div>').addClass('card-content').text(message.text);
+  messageNode.append(textNode).append(userNode);
+  messageContainer.append(messageNode);
 
-
-
-  // $('#chats').append(`<div><span class="username">${message.username}<span>: ${message.text}</div>`);
-  // $('#chats').append(messageNode);  
-  $('#chats').prepend(messageNode);  
+  $('#chats').prepend(messageContainer);  
 };
 
 app.renderRoom = (room) => {
-  // $('#roomSelect').append(`<option value="${room.toLowerCase()}">${room}</option>`);
-  $('#roomSelect').append(`<option value="${room.toLowerCase()}">${room}</option>`);
+  $('#roomSelect').append(`<option class=blue-text darken-1-text value="${room.toLowerCase()}">${room}</option>`);
 };
 
 app.handleUsernameClick = () => {
@@ -101,16 +99,20 @@ app.handleUsernameClick = () => {
 app.handleSubmit = () => {
   console.log('handleSubmit');
   var msgText = $('#message').val();
-  var userName = window.location.search.split('=')[1];
-  var currRoom = $('#roomSelect').val();
+  if (msgText !== '') {
+    var userName = window.location.search.split('=')[1];
+    var currRoom = $('#roomSelect').val();
 
-  var message = {
-    username: userName,
-    text: msgText,
-    roomname: currRoom
-  };
-  app.send(message);
-  $('#message').val('');
+    var message = {
+      username: userName,
+      text: msgText,
+      roomname: currRoom
+    };
+    app.send(message);
+    $('#message').val('');
+  } else {
+    return false;
+  }
 };
 
 $(document).ready( () => {
