@@ -42,11 +42,19 @@
         <button id="fetch" class="btn waves-effect waves-light submit grey lighten-1 black-text">Fetch</button>
         <!-- Your HTML goes here! -->
         <!-- <select id="roomSelect"></select> -->
-        <div class="input-field col s12 ">
-          <select id="roomSelect">
-            <option class="blue-text darken-1-text" value="lobby">lobby</option>
-          </select>
-          <!-- <label>Materialize Select</label> -->
+        <div class="row">
+          <div class="input-field col s4">
+            <select id="roomSelect">
+              <option class="blue-text darken-1-text" value="lobby">lobby</option>
+            </select>
+            <label>Select Room</label>
+          </div>
+          <div class="col s8">
+            <form id="roomCreation">
+              <input id="roomCreate" type="text" name="message" placeholder="create room">
+              <button class="btn waves-effect waves-light submit blue darken-1" type="button">Create</button>
+            </form>
+          </div>
         </div>
         <form id="send">
           <input id="message" type="text" name="message" placeholder="say something">

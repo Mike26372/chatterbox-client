@@ -11,7 +11,9 @@ var app = {
         'iso': '2016-11-21T00:00:00.000Z'
       }
     }
-  }
+  },
+  lobbyQuery: '',
+  rooms: ['lobby']
 };
   
 app.init = () => {
@@ -25,14 +27,33 @@ app.init = () => {
     app.fetch(`${app.fromLastFetchQuery}${JSON.stringify(app.greaterThanDateQueryObj)}`);
   });
 
-  // app.renderRoom('lobby');
   app.fetch(app.mostRecentQuery);
   $('select').material_select();
+
+  $('#roomCreation').on('click', 'button', (event) => {
+    var newRoom = $('#roomCreate').val();
+    app.rooms.push(newRoom);
+    app.renderRoom(newRoom, true);
+    $('#roomSelect').material_select();
+    $('#roomCreate').val('');
+    $('#roomSelect').trigger('change');
+  });
+
+  $('#roomSelect').on('change', (event) => {
+    console.log('select event');
+    $('#chats').html('');
+    app.fetchFromCurrRoom();
+  });
+
+  $('#chats').on('click', '.username', (event) => {
+    let username = $(event.currentTarget).find('a').text();
+    console.log(username);
+    $(`.username:contains(${username})`).css( 'text-decoration', 'underline' );
+  });
 };
 
 app.send = (message) => {  
   $.ajax({
-    // This is the url you should use to communicate with the parse API server.
     url: app.server,
     type: 'POST',
     data: JSON.stringify(message),
@@ -42,7 +63,6 @@ app.send = (message) => {
       console.log(data);
     },
     error: function (data) {
-      // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
       console.error('chatterbox: Failed to send message', data);
     }
   });
@@ -50,26 +70,34 @@ app.send = (message) => {
 
 app.fetch = (query = '') => {
   $.ajax({
-    // This is the url you should use to communicate with the parse API server.
     url: `${app.server}${query}`,
     type: 'GET',
     contentType: 'application/json',
     success: function (data) {
       console.log(data);
-      _.each(data.results.reverse(), (value) => {
+      var newRooms = _.map(data.results.reverse(), (value) => {
         app.renderMessage(value);
+        return value.roomname;
+      });
+      var uniqRooms = _.uniq(newRooms);
+      console.log(uniqRooms);
+      uniqRooms.forEach((value) => {
+        if (app.rooms.indexOf(value) < 0 && value != null) {
+          app.rooms.push(value);
+          app.renderRoom(value);
+          $('#roomSelect').material_select();
+        }
       });
     },
     error: function (data) {
-      // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
       console.error('chatterbox: Failed to send message', data);
     }
   });
   app.recentFetch = new Date();
 };
 
-app.appendToPage = () => {
-
+app.fetchFromCurrRoom = function() {
+  app.fetch(`${app.fromLastFetchQuery}{"roomname":"${$('#roomSelect').val()}"}`);
 };
 
 app.clearMessages = () => {
@@ -88,8 +116,11 @@ app.renderMessage = (message) => {
   $('#chats').prepend(messageContainer);  
 };
 
-app.renderRoom = (room) => {
-  $('#roomSelect').append(`<option class=blue-text darken-1-text value="${room.toLowerCase()}">${room}</option>`);
+app.renderRoom = (room, selected = false) => {
+  let $option = $(`<option class="blue-text darken-1-text" value="${room}"></option>`).text(room);
+  $option.prop('selected', selected);
+  $('#roomSelect').append($option);
+  // currNode.find('option').prop('selected', selected);
 };
 
 app.handleUsernameClick = () => {
