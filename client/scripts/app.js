@@ -28,6 +28,8 @@ app.init = () => {
   });
 
   app.fetch(app.mostRecentQuery);
+  // app.fetchFromCurrRoom();
+
   $('select').material_select();
 
   $('#roomCreation').on('click', 'button', (event) => {
@@ -68,6 +70,11 @@ app.send = (message) => {
   });
 };
 
+app.setTimeoutUtility = function() {
+  app.greaterThanDateQueryObj.createdAt.$gte.iso = '' + app.recentFetch.toISOString();
+  app.fetch(`${app.fromLastFetchQuery}${JSON.stringify(app.greaterThanDateQueryObj)}`);
+};
+
 app.fetch = (query = '') => {
   $.ajax({
     url: `${app.server}${query}`,
@@ -94,6 +101,7 @@ app.fetch = (query = '') => {
     }
   });
   app.recentFetch = new Date();
+  // setTimeout(app.setTimeoutUtility, 3000);
 };
 
 app.fetchFromCurrRoom = function() {
